@@ -53,6 +53,7 @@ $_SESSION['token'] = "ABC";
             <tr>
                 <td>
                     <button data-show="on" onclick="showHideSummers()"> Show/Hide Summers</button>
+                    <button data-show="on" onclick="autoPlan()">Auto Plan</button>
                 </td>
             </tr>
             <!-- <tr> <td><button onclick="unplan()" > Save Plan </button> </td> </tr>

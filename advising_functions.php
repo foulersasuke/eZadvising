@@ -992,7 +992,9 @@ function getPlanned($token, $studentId, $semester, $year)
     $conn = null;
     return $jsonResult;
 }
+function autoPlan(){
 
+}
 
 //evalSinglePrereq("ABC",2, 2);
 
