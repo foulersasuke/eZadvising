@@ -678,11 +678,13 @@ function evalFullPrereq($token, $studentId, $courseId)
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':courseId', $courseId);
+
         $stmt->execute();
+
 
         $prereq = $stmt->fetch();
         //echo "pcount: ".$stmt->rowCount()."<br />";
-        if ($stmt->rowCount() <= 0) {
+        if ($prereq->rowCount() <= 0) {
             //double check no prereqs
             //echo "courseId: ".$courseId;
             $sql = 'SELECT prereqs FROM courses WHERE courses.id=:courseId';
@@ -709,7 +711,7 @@ function evalFullPrereq($token, $studentId, $courseId)
         $tokens = explode(" ", $prereq['expression']);
         $evaledTokens = [];
         foreach ($tokens as $token) {
-            //echo "<p>token:".$token;
+            echo "<p>token:".$token;
             if (is_numeric($token)) {
                 $eval = evalSinglePrereq($token, $studentId, $token);
                 // echo "=>".$eval;
@@ -718,21 +720,21 @@ function evalFullPrereq($token, $studentId, $courseId)
             } else {
                 $evaledTokens[] = $token;
             }
-            // echo "</p>";
+            echo "</p>";
         }//end foreach token
 
         //echo "<p>";
         foreach ($evaledTokens as $t) {
             //echo $t." ";
         }
-        // echo "</p>";
+        //echo "</p>";
 
         //send boolean expression to shunting yard function
         $input = shunting_yard($evaledTokens);
         $result = eval_rpn($input);
         foreach ($evaledTokens as $t)
-            //echo $t." ";
-            //echo "==> ".($result ? "true" : "false")."\n";
+        {   echo $t." ";
+            echo "==> ".($result ? "true" : "false")."\n";}
 
 
             $sql = "";
@@ -793,7 +795,9 @@ function evalSinglePrereq($token, $studentId, $prereqDetailId)
             return 403;
         }
 
-        if (empty($prereqDetailId)) return 404;
+        if (empty($prereqDetailId)) {
+            return 404;
+        }
 
         $conn = new PDO(DBCONNECTSTRING, DBUSER, DBPASSWORD);
         $sql = 'SELECT *  FROM prereq_detail WHERE prereq_detail.id=:id';
@@ -803,7 +807,9 @@ function evalSinglePrereq($token, $studentId, $prereqDetailId)
         $stmt->execute();
 
         $prereq = $stmt->fetch();
-        if ($stmt->rowCount() <= 0) return 404;
+        if ($stmt->rowCount() <= 0) {
+            return 404;
+        }
         // echo "count: ".$stmt->rowCount()."<br />";
         // echo $prereq.$prereq['id']." ".$prereq['type']." ".$prereq['courseId']." ".$prereq['minGrade']." ;<br />";
 
@@ -847,9 +853,9 @@ function evalSinglePrereq($token, $studentId, $prereqDetailId)
 
     }//end try
     catch (PDOException $e) {
-        //echo $sql . "<br>" . $e->getMessage();
-        return 500;
-    }
+    //echo $sql . "<br>" . $e->getMessage();
+    return 500;
+}
 
     $conn = null;
     return $result;
